@@ -25,6 +25,6 @@ jobs:
       # 3. Merge changes from upstream to the fork
       - name: Merge changes from upstream to fork
         run: |
-          git checkout master  # 确保你在想要同步的分支
-          git merge upstream/master  # 合并原仓库的更新
-          git push origin master  # 推送到你的 Fork 仓库
+          git checkout main  # 确保你在想要同步的分支
+          git merge upstream/main  # 合并原仓库的更新
+          git push origin main  # 推送到你的 Fork 仓库
