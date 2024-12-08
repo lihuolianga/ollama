@@ -1,0 +1,30 @@
+name: Sync Fork with Upstream Repository
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # 每小时同步一次
+  push:
+    branches:
+      - master  # 你可以修改为你想同步的分支
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout Fork repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2. Add the upstream remote repository
+      - name: Add upstream remote
+        run: |
+          git remote add upstream https://github.com/ollama/ollama.git
+          git fetch upstream
+
+      # 3. Merge changes from upstream to the fork
+      - name: Merge changes from upstream to fork
+        run: |
+          git checkout master  # 确保你在想要同步的分支
+          git merge upstream/master  # 合并原仓库的更新
+          git push origin master  # 推送到你的 Fork 仓库
