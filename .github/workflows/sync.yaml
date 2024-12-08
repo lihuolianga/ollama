@@ -15,16 +15,26 @@ jobs:
       # 1. Checkout Fork repository
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # 获取完整的历史记录（必须）
 
-      # 2. Add the upstream remote repository
+      # 2. Add upstream remote repository
       - name: Add upstream remote
         run: |
-          git remote add upstream https://github.com/ollama/ollama.git
-          git fetch upstream
+          git remote add upstream https://github.com/ORIGINAL_OWNER/ORIGINAL_REPOSITORY.git
+          git fetch upstream --prune  # 获取所有分支和删除上游已删除的分支
 
-      # 3. Merge changes from upstream to the fork
-      - name: Merge changes from upstream to fork
+      # 3. Sync all branches
+      - name: Sync branches
         run: |
-          git checkout main  # 确保你在想要同步的分支
-          git merge upstream/main  # 合并原仓库的更新
-          git push origin main  # 推送到你的 Fork 仓库
+          for branch in $(git branch -r | grep 'upstream/' | grep -v 'HEAD' | sed 's/upstream\///'); do
+            git checkout $branch || git checkout -b $branch
+            git pull upstream $branch
+            git push origin $branch
+          done
+
+      # 4. Sync tags
+      - name: Sync tags
+        run: |
+          git fetch upstream --tags
+          git push origin --tags
